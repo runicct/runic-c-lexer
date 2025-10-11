@@ -44,6 +44,9 @@ static string CreateNuspec(string packageId, string version, string description,
     stringBuilder.AppendLine("    <tags>runic runicct compiler construction toolkit " + tags + "</tags>");
     stringBuilder.AppendLine("    <license type=\"expression\">MIT</license>");
     stringBuilder.AppendLine("    <licenseUrl>https://licenses.nuget.org/MIT</licenseUrl>");
+    stringBuilder.AppendLine("    <dependencies>");
+    stringBuilder.AppendLine("        <dependency id=\"Runic.Token\" version=\"[1.0.0,)\" />");
+    stringBuilder.AppendLine("    </dependencies>");
     stringBuilder.AppendLine("    <icon>runic_logo.png</icon>");
     stringBuilder.AppendLine("  </metadata>");
     stringBuilder.AppendLine("</package>");
@@ -73,7 +76,7 @@ using (var fileStream = new FileStream(nupkgPath, FileMode.Create, FileAccess.Re
         var entry = zip.CreateEntry("Runic.C.Lexer.nuspec", CompressionLevel.Optimal);
         using (var stream = entry.Open())
         {
-            var bytes = System.Text.Encoding.UTF8.GetBytes(CreateNuspec("Runic.C.Lexer", version, "This package is part of Runic Compiler Toolkit and provides a way to tokenize C code", "c lexer tokenizer token"));
+            var bytes = System.Text.Encoding.UTF8.GetBytes(CreateNuspec("Runic.C.Lexer", version, "This package is part of Runic Compiler Toolkit and provides a way to tokenize C code", "c code language lexer tokenizer token"));
             stream.Write(bytes, 0, bytes.Length);
         }
         entry = zip.CreateEntry("lib/net48/Runic.C.Lexer.dll", CompressionLevel.Optimal);

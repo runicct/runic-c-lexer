@@ -33,9 +33,9 @@ namespace Runic.C
 
         System.IO.StreamReader _reader;
         ITokenFactory _tokenFactory;
-        public Lexer(ITokenFactory tokenFactory, System.IO.StreamReader Reader)
+        public Lexer(ITokenFactory tokenFactory, System.IO.StreamReader reader)
         {
-            _reader = Reader;
+            _reader = reader;
             _tokenFactory = tokenFactory;
         }
         char ReadChar()
@@ -58,15 +58,15 @@ namespace Runic.C
         /// Skip all the whitespaces and return the first character
         /// that is not a whitespace
         /// </summary>
-        char SkipWhiteSpaces(out int Line, out int Column)
+        char SkipWhiteSpaces(out int line, out int column)
         {
-            Line = _lineIndex;
-            Column = _chrIndex;
+            line = _lineIndex;
+            column = _chrIndex;
             char chr = ReadChar();
             while (chr != '\0' && chr != '\n' && char.IsWhiteSpace(chr))
             {
-                Line = _lineIndex;
-                Column = _chrIndex;
+                line = _lineIndex;
+                column = _chrIndex;
                 chr = ReadChar();
             }
             return chr;
@@ -240,7 +240,11 @@ namespace Runic.C
                 chr = ReadChar();
             }
         }
+#if NET6_0_OR_GREATER
         string? ReadIncludeWithChevron()
+#else
+        string ReadIncludeWithChevron()
+#endif
         {
             string token = "<";
             while (true)
@@ -258,11 +262,14 @@ namespace Runic.C
             }
             return token;
         }
-
-        string? ReadNextTokenInternal(out int Line, out int Column)
+#if NET6_0_OR_GREATER
+        string? ReadNextTokenInternal(out int line, out int column)
+#else
+        string ReadNextTokenInternal(out int line, out int column)
+#endif
         {
-            Line = _lineIndex;
-            Column = _chrIndex;
+            line = _lineIndex;
+            column = _chrIndex;
             char chr = ReadChar();
             if (chr == '\0') { return null; }
             switch (chr)
@@ -478,9 +485,17 @@ namespace Runic.C
         bool _preprocessor = false;
         bool _newLine = true;
         bool _include = false;
-        public string? ReadNextToken(out int Line, out int Column)
+#if NET6_0_OR_GREATER
+        public string? ReadNextToken(out int line, out int column)
+#else
+        public string ReadNextToken(out int line, out int column)
+#endif
         {
-            string? token = ReadNextTokenInternal(out Line, out Column);
+#if NET6_0_OR_GREATER
+            string? token = ReadNextTokenInternal(out line, out column);
+#else
+            string token = ReadNextTokenInternal(out line, out column);
+#endif
             if (token == null) { return token; }
             switch (token)
             {
@@ -510,11 +525,19 @@ namespace Runic.C
             }
         }
 
+#if NET6_0_OR_GREATER
         public Token? ReadNextToken()
+#else
+        public Token ReadNextToken()
+#endif
         {
             int startLine = 0;
             int startColumn = 0;
+#if NET6_0_OR_GREATER
             string? value = ReadNextToken(out startLine, out startColumn);
+#else
+            string value = ReadNextToken(out startLine, out startColumn);
+#endif
             if (value == null) { return null; }
             int endLine = _lineIndex;
             int endColumn = _chrIndex - 1;

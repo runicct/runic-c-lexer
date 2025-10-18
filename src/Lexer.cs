@@ -24,7 +24,7 @@
 
 namespace Runic.C
 {
-    public class Lexer : ITokenStream
+    public abstract class Lexer : ITokenStream
     {
         int _lineIndex = 1;
         public int LineIndex { get { return _lineIndex; } }
@@ -32,11 +32,14 @@ namespace Runic.C
         public int ChrIndex { get { return _chrIndex; } }
 
         System.IO.StreamReader _reader;
-        ITokenFactory _tokenFactory;
-        public Lexer(ITokenFactory tokenFactory, System.IO.StreamReader reader)
+#if NET6_0_OR_GREATER
+        protected abstract Token CreateToken(int startLine, int startColumn, int endLine, int endColumn, string? value);
+#else
+        protected abstract Token CreateToken(int startLine, int startColumn, int endLine, int endColumn, string value);
+#endif
+        public Lexer(System.IO.StreamReader reader)
         {
             _reader = reader;
-            _tokenFactory = tokenFactory;
         }
         char ReadChar()
         {
@@ -548,7 +551,7 @@ namespace Runic.C
                 endLine = endLine - 1;
                 endColumn = startColumn;
             }
-            return _tokenFactory.CreateToken(startLine, startColumn, endLine, endColumn, value);
+            return CreateToken(startLine, startColumn, endLine, endColumn, value);
         }
     }
 }

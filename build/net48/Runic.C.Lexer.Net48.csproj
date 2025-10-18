@@ -32,7 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Runic.Token, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"/>
+    <Reference Include="Runic.Token, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Runic.Token.1.0.1\lib\net48\Runic.Token.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
   </ItemGroup>

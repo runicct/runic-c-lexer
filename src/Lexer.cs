@@ -79,9 +79,9 @@ namespace Runic.C
         /// 'A'
         /// </summary>
         /// <returns></returns>
-        string ReadLiteralChar()
+        string ReadLiteralChar(bool wide)
         {
-            string token = "'";
+            string token = wide ? "L'" : "'";
             while (true)
             {
                 char chr = ReadChar();
@@ -107,9 +107,9 @@ namespace Runic.C
             return token;
         }
 
-        string ReadLiteralString()
+        string ReadLiteralString(bool wide)
         {
-            string token = "\"";
+            string token = wide ? "L\"" : "\"";
             while (true)
             {
                 char chr = ReadChar();
@@ -475,8 +475,15 @@ namespace Runic.C
                         case '>': ReadChar(); return ":>";
                         default: return ":";
                     }
-                case '\'': return ReadLiteralChar();
-                case '\"': return ReadLiteralString();
+                case 'L':
+                    switch (PeekChar())
+                    {
+                        case '\'': ReadChar(); return ReadLiteralChar(true);
+                        case '\"': ReadChar(); return ReadLiteralString(true);
+                        default: return ReadToken(chr);
+                    }
+                case '\'': return ReadLiteralChar(false);
+                case '\"': return ReadLiteralString(false);
                 default: return ReadToken(chr);
             }
         }
